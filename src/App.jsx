@@ -18,14 +18,12 @@ function App() {
   };
   const yearStyle = { 
     color: '#0077c7', 
-    fontSize: '20px', 
-    fontStyle: 'italic', 
+    fontSize: '20px',  
     marginBottom: '8px' 
   };
   const genreStyle = { 
     color: '#65baff', 
     fontSize: '20px', 
-    fontWeight: '600', 
     marginBottom: '15px' 
   };
 
@@ -34,35 +32,62 @@ function App() {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  const handleLike = () => {
-    if (liked) {
-      setLikes(likes - 1);
-      setLiked(false);
-    } else {
-      setLikes(likes + 1);
-      setLiked(true);
-      if (disliked) {
-        setDislikes(dislikes - 1);
-        setDisliked(false);
-      }
-    }
+  const like = () => {
+    setLikes(liked ? likes - 1 : likes + 1);
+    setLiked(!liked);
+    setDislikes(disliked ? dislikes - 1 : dislikes);
+    setDisliked(false);
   };
 
-  const handleDislike = () => {
-    if (disliked) {
-      setDislikes(dislikes - 1);
-      setDisliked(false);
-    } else {
-      setDislikes(dislikes + 1);
-      setDisliked(true);
-      if (liked) {
-        setLikes(likes - 1);
-        setLiked(false);
-      }
-    }
+  const dislike = () => {
+    setDislikes(disliked ? dislikes  - 1 : dislikes + 1);
+    setDisliked(!disliked);
+    setLikes(liked ?  likes - 1: likes);
+    setLiked(false);
   };
 
-  const actionButtonClass = 'actionButton';
+  const containerStyle = {
+    display: 'flex',
+    gap: '10px'
+  };
+
+  const buttonStyle = {
+    backgroundColor: '#a4ff67',
+    pading: '8px 16px',
+    border: '2px solid #525252',
+    cursor: 'pointer',
+    color: 'white',
+    fontWeight: 'bold'
+  };
+
+  const likeButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: liked ? 'green' : '#a3a3a3'
+  };
+
+  const dislikeButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: disliked ? 'red' : '#a3a3a3' 
+  };
+
+  const fixedContainerStyle = {
+    position: 'fixed',
+    width: '6em',
+    height: '3em',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: '30px',
+    bottom: '40px',
+    color: '#2c3e50',
+    fontWeight: 'bold', 
+    backgroundColor: 'white',
+    boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+    borderRadius: '8px',
+    fontSize: '18px'
+  };
+
+
 
   return (
     <div style={{ margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
@@ -73,14 +98,17 @@ function App() {
       <p>Нравится: {likes}</p>
       <p>Не нравится: {dislikes}</p>
       
-      <button
-        className={actionButtonClass}
-        onClick={handleLike}
-        style={{ backgroundColor: '#a4ff67', padding: '8px 16px', marginRight: '10px' }}>Нравится</button>
-      <button
-        className={actionButtonClass}
-        onClick={handleDislike}
-        style={{ backgroundColor: '#ff5151', padding: '8px 16px'}}>Не нравится</button>
+      <div style={containerStyle}>
+        <button onClick={like} style={likeButtonStyle}>Нравится</button>
+        <button onClick={dislike} style={dislikeButtonStyle}>Не нравится</button>
+      </div>
+
+      {liked && (
+        <div style={fixedContainerStyle}>
+          {film.title}
+        </div>
+      )}
+
     </div>
   );
 }
