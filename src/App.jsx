@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FilmCard from './components/FilmCard.jsx';
 
 const allFilms = [
@@ -38,19 +38,35 @@ const allFilms = [
 
 function App() {
   const [films, setFilms] = useState(allFilms);
-  const [likedIds, setLikedIds] = useState([]);
-  const [dislikedIds, setDislikedIds] = useState([]);
+  const [isLiked, setisLiked] = useState([]);
+  const [disLiked, setdisLiked] = useState([]);
+  const [viewCount, setViewCount] = useState(0);
+
+  useEffect(() => {
+    const connection = {
+      init: () => {
+        const viewedFilmsCount = new Set([...isLiked, ...disLiked]).size;
+        setViewCount(viewedFilmsCount);
+      },
+      disconnect: () => {
+      }
+    };
+    connection.init();
+    return () => {
+      connection.disconnect();
+    };
+  }, [isLiked, disLiked]);
 
   const handleLike = (id) => {
     setFilms(prev => prev.map(f => {
       if (f.id === id) {
-        if (likedIds.includes(id)) {
-          setLikedIds(prevLiked => prevLiked.filter(item => item !== id));
+        if (isLiked.includes(id)) {
+          setisLiked(prevLiked => prevLiked.filter(item => item !== id));
           return { ...f, likesCount: f.likesCount - 1 };
         } else {
-          setLikedIds(prevLiked => [...prevLiked, id]);
-          if (dislikedIds.includes(id)) {
-            setDislikedIds(prevDisliked => prevDisliked.filter(item => item !== id));
+          setisLiked(prevLiked => [...prevLiked, id]);
+          if (disLiked.includes(id)) {
+            setdisLiked(prevDisliked => prevDisliked.filter(item => item !== id));
             return {
               ...f,
               likesCount: f.likesCount + 1,
@@ -67,13 +83,13 @@ function App() {
   const handleDislike = (id) => {
     setFilms(prev => prev.map(f => {
       if (f.id === id) {
-        if (dislikedIds.includes(id)) {
-          setDislikedIds(prevDisliked => prevDisliked.filter(item => item !== id));
+        if (disLiked.includes(id)) {
+          setdisLiked(prevDisliked => prevDisliked.filter(item => item !== id));
           return { ...f, dislikesCount: f.dislikesCount - 1 };
         } else {
-          setDislikedIds(prevDisliked => [...prevDisliked, id]);
-          if (likedIds.includes(id)) {
-            setLikedIds(prevLiked => prevLiked.filter(item => item !== id));
+          setdisLiked(prevDisliked => [...prevDisliked, id]);
+          if (isLiked.includes(id)) {
+            setisLiked(prevLiked => prevLiked.filter(item => item !== id));
             return {
               ...f,
               dislikesCount: f.dislikesCount + 1,
@@ -87,11 +103,24 @@ function App() {
     }));
   };
 
-  const likedFilms = films.filter(f => likedIds.includes(f.id));
-  const dislikedFilms = films.filter(f => dislikedIds.includes(f.id));
+  const likedFilms = films.filter(f => isLiked.includes(f.id));
+  const dislikedFilms = films.filter(f => disLiked.includes(f.id));
 
   return (
-    <div style={{ display: 'flex', padding: '20px', gap: '20px', fontFamily: 'Arial' }}>
+    <div style={{ position: 'relative', display: 'flex', padding: '20px', gap: '20px', fontFamily: 'Arial' }}>
+      <div style={{
+        position: 'absolute',
+        bottom: '10px',
+        right: '10px',
+        backgroundColor: '#fff',
+        padding: '8px 12px',
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        fontWeight: 'bold'
+      }}>
+        Просмотрено: {viewCount}
+      </div>
+
       <div style={{ flex: 3 }}>
         <h2>Каталог фильмов</h2>
         {films.map((film) => (
@@ -104,8 +133,8 @@ function App() {
             dislikes={film.dislikesCount}
             handleLike={() => handleLike(film.id)}
             handleDislike={() => handleDislike(film.id)}
-            isLiked={likedIds.includes(film.id)}
-            isDisliked={dislikedIds.includes(film.id)}
+            isLiked={isLiked.includes(film.id)}
+            isDisliked={disLiked.includes(film.id)}
           />
         ))}
       </div>
