@@ -1,0 +1,32 @@
+.container {
+  position: relative;
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.viewCounter {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #fff;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.mainContent {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.filmList {
+  flex: 3;
+}
+
+.likedDisliked {
+  flex: 1;
+}
