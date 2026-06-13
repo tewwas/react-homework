@@ -1,47 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import FilmCard from './components/FilmCard.jsx';
 import './App.css';
+import { v4 as uuidv4 } from 'uuid';
+import classNames from 'classnames';
+import image1 from './assets/avengers_poster.webp';
+import image2 from './assets/nowyouseeme_poster.webp';
+import image3 from './assets/titanic_poster.webp';
+import image4 from './assets/twilight_poster.jpg';
 
 const allFilmsData = [
   {
-    id: 1,
+    id: uuidv4(),
     title: 'Титаник',
     year: 1997,
     genre: 'Драма',
     likesCount: 30,
     dislikesCount: 12,
     liked: false,
-    disliked: false
+    disliked: false,
+    image: image3,
   },
   {
-    id: 2,
+    id: uuidv4(),
     title: 'Сумерки',
     year: 2008,
     genre: 'Мелодрама',
     likesCount: 42,
     dislikesCount: 31,
     liked: false,
-    disliked: false
+    disliked: false,
+    image: image4,
   },
   {
-    id: 3,
+    id: uuidv4(),
     title: 'Иллюзия обмана',
     year: 2013,
     genre: 'Триллер',
     likesCount: 49,
     dislikesCount: 15,
     liked: false,
-    disliked: false
+    disliked: false,
+    image: image2,
   },
   {
-    id: 4,
+    id: uuidv4(),
     title: 'Мстители',
     year: 2012,
     genre: 'Боевик',
     likesCount: 52,
     dislikesCount: 36,
     liked: false,
-    disliked: false
+    disliked: false,
+    image: image1,
   },
 ];
 
@@ -52,8 +62,6 @@ function App() {
   const [disLiked, setDisLiked] = useState([]);
   const [viewedFilms, setViewedFilms] = useState([]);
   const [viewCount, setViewCount] = useState(0);
-
-
   const [filterName, setFilterName] = useState('');
   const [filterYearFrom, setFilterYearFrom] = useState('');
   const [filterYearTo, setFilterYearTo] = useState('');
@@ -215,6 +223,8 @@ function App() {
                 handleDislike={() => handleDislike(film.id)}
                 isLiked={film.liked}
                 isDisliked={film.disliked}
+                image={film.image}
+                className={classNames('film-card', { liked: film.liked, disliked: film.disliked })}
               />
             </div>
           ))}

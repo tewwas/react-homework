@@ -9,7 +9,8 @@ function FilmCard({
   handleLike, 
   handleDislike, 
   isLiked, 
-  isDisliked 
+  isDisliked, 
+  image
 }) {
   const titleStyle = { 
     color: '#2c3e50', 
@@ -56,7 +57,13 @@ function FilmCard({
       padding: '10px',
       marginBottom: '10px'
     }}>
+      
       <h2 style={titleStyle}>{title}</h2>
+      {image && (
+        <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+          <img src={image} alt={title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '7px' }} />
+        </div>
+      )}
       <p style={yearStyle}>Год выпуска: {date}</p>
       <p style={genreStyle}>Жанр: {genre}</p>
       <p>Понравилось: {likes}</p>
