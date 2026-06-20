@@ -7,6 +7,7 @@ import image1 from './assets/avengers_poster.webp';
 import image2 from './assets/nowyouseeme_poster.webp';
 import image3 from './assets/titanic_poster.webp';
 import image4 from './assets/twilight_poster.jpg';
+import { Routes, Route, Link, useParams, useSearchParams } from 'react-router-dom';
 
 const allFilmsData = [
   {
@@ -56,16 +57,14 @@ const allFilmsData = [
 ];
 
 function App() {
+  const [allFilms, setAllFilms] = useState([]);
   const [films, setFilms] = useState([]);
-  const [allFilms, setAllFilms] = useState([])
-  const [liked, setLiked] = useState([]);
-  const [disLiked, setDisLiked] = useState([]);
   const [viewedFilms, setViewedFilms] = useState([]);
   const [viewCount, setViewCount] = useState(0);
-  const [filterName, setFilterName] = useState('');
-  const [filterYearFrom, setFilterYearFrom] = useState('');
-  const [filterYearTo, setFilterYearTo] = useState('');
-  const [filterGenre, setFilterGenre] = useState('');
+  const [liked, setLiked] = useState([]);
+  const [disLiked, setDisLiked] = useState([]);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     setAllFilms(allFilmsData);
@@ -76,33 +75,29 @@ function App() {
     setViewCount(viewedFilms.length);
   }, [viewedFilms]);
 
-  const addToViewed = (id) => {
-    setViewedFilms(prev => {
-      if (!prev.includes(id)) {
-        return [...prev, id];
-      }
-      return prev;
-    });
-  };
-
   useEffect(() => {
+    const search = searchParams.get('search') || '';
+    const genre = searchParams.get('genre') || '';
+    const date_from = searchParams.get('date_from') || '';
+    const date_to = searchParams.get('date_to') || '';
+
     let filtered = [...allFilms];
 
-    if (filterName) {
-      filtered = filtered.filter(f => f.title.toLowerCase().includes(filterName.toLowerCase()));
+    if (search) {
+      filtered = filtered.filter(f => f.title.toLowerCase().includes(search.toLowerCase()));
     }
-    if (filterGenre) {
-      filtered = filtered.filter(f => f.genre === filterGenre);
+    if (genre) {
+      filtered = filtered.filter(f => f.genre === genre);
     }
-    if (filterYearFrom) {
-      filtered = filtered.filter(f => f.year >= parseInt(filterYearFrom));
+    if (date_from) {
+      filtered = filtered.filter(f => f.year >= parseInt(date_from));
     }
-    if (filterYearTo) {
-      filtered = filtered.filter(f => f.year <= parseInt(filterYearTo));
+    if (date_to) {
+      filtered = filtered.filter(f => f.year <= parseInt(date_to));
     }
 
     setFilms(filtered);
-  }, [filterName, filterYearFrom, filterYearTo, filterGenre, allFilms]);
+  }, [searchParams, allFilms]);
 
   const handleLike = (id) => {
     setFilms(prev => prev.map(f => {
@@ -174,78 +169,152 @@ function App() {
   const likedFilms = films.filter(f => f.liked);
   const dislikedFilms = films.filter(f => f.disliked);
 
-  return (
-    <div className="container">
-      <div className="filters">
-        <input
-          type="text"
-          placeholder="Название"
-          value={filterName}
-          onChange={(e) => setFilterName(e.target.value)}/>
-        <select
-          value={filterGenre}
-          onChange={(e) => setFilterGenre(e.target.value)}>
-          <option value="">Все жанры</option>
-          <option value="Драма">Драма</option>
-          <option value="Мелодрама">Мелодрама</option>
-          <option value="Триллер">Триллер</option>
-          <option value="Боевик">Боевик</option>
-        </select>
-        <input
-          type="number"
-          placeholder="Год от"
-          value={filterYearFrom}
-          onChange={(e) => setFilterYearFrom(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Год до"
-          value={filterYearTo}
-          onChange={(e) => setFilterYearTo(e.target.value)}
-        />
-      </div>
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchParams(prev => {
+      const params = new URLSearchParams(prev);
+      if (value) {
+        params.set('search', value);
+      } else {
+        params.delete('search');
+      }
+      return params;
+    });
+  };
 
-      <div className="viewCounter">
-        Просмотрено: {viewCount}
-      </div>
-      <div className="mainContent">
-        <div className="filmList">
-          <h2>Каталог фильмов</h2>
-          {films.map((film) => (
-            <div key={film.id} onClick={() => addToViewed(film.id)}>
-              <FilmCard
-                title={film.title}
-                date={film.year}
-                genre={film.genre}
-                likes={film.likesCount}
-                dislikes={film.dislikesCount}
-                handleLike={() => handleLike(film.id)}
-                handleDislike={() => handleDislike(film.id)}
-                isLiked={film.liked}
-                isDisliked={film.disliked}
-                image={film.image}
-                className={classNames('film-card', { liked: film.liked, disliked: film.disliked })}
+  const handleGenreChange = (e) => {
+    const value = e.target.value;
+    setSearchParams(prev => {
+      const params = new URLSearchParams(prev);
+      if (value) {
+        params.set('genre', value);
+      } else {
+        params.delete('genre');
+      }
+      return params;
+    });
+  };
+
+  const handleDateFromChange = (e) => {
+    const value = e.target.value;
+    setSearchParams(prev => {
+      const params = new URLSearchParams(prev);
+      if (value) {
+        params.set('date_from', value);
+      } else {
+        params.delete('date_from');
+      }
+      return params;
+    });
+  };
+
+  const handleDateToChange = (e) => {
+    const value = e.target.value;
+    setSearchParams(prev => {
+      const params = new URLSearchParams(prev);
+      if (value) {
+        params.set('date_to', value);
+      } else {
+        params.delete('date_to');
+      }
+      return params;
+    });
+  };
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div className="container">
+            <div className="filters">
+              <input
+                type="text"
+                placeholder="Название"
+                value={searchParams.get('search') || ''}
+                onChange={handleSearchChange}/>
+              <select 
+                value={searchParams.get('genre') || ''}
+                onChange={handleGenreChange}>
+                <option value="">Все жанры</option>
+                <option value="Драма">Драма</option>
+                <option value="Мелодрама">Мелодрама</option>
+                <option value="Триллер">Триллер</option>
+                <option value="Боевик">Боевик</option>
+              </select>
+              <input
+                type="number"
+                placeholder="Год от"
+                value={searchParams.get('date_from') || ''}
+                onChange={handleDateFromChange}
+              />
+              <input
+                type="number"
+                placeholder="Год до"
+                value={searchParams.get('date_to') || ''}
+                onChange={handleDateToChange}
               />
             </div>
-          ))}
-        </div>
+            <div className="viewCounter">
+              Просмотрено: {viewCount}
+            </div>
+            <div className="mainContent">
+              <div className="filmList">
+                <h2>Каталог фильмов</h2>
+                {films.map((film) => (
+                  <div key={film.id} onClick={() => addToViewed(film.id)}>
+                    <FilmCard
+                      title={film.title}
+                      date={film.year}
+                      genre={film.genre}
+                      likes={film.likesCount}
+                      dislikes={film.dislikesCount}
+                      handleLike={() => handleLike(film.id)}
+                      handleDislike={() => handleDislike(film.id)}
+                      isLiked={film.liked}
+                      isDisliked={film.disliked}
+                      image={film.image}
+                      className={classNames('film-card', { liked: film.liked, disliked: film.disliked })}
+                      link={`/film/${film.id}`}
+                    />
+                  </div>
+                ))}
+              </div>
 
-        <div className="likeDisliked">
-          <div>
-            <h3>Мне понравилось ({likedFilms.length})</h3>
-            {likedFilms.map(f => (
-              <div key={f.id}>{f.title}</div>
-            ))}
+              <div className="likeDisliked">
+                <div>
+                  <h3 style={{ color:'#3ca300' }}>Мне понравилось ({likedFilms.length})</h3>
+                  {likedFilms.map((f) => (
+                    <div key={f.id}>{f.title}</div>
+                  ))}
+                </div>
+                <div style={{ marginTop: '20px' }}>
+                  <h3 style={{ color:'#a10000' }}>Мне не понравилось ({dislikedFilms.length})</h3>
+                  {dislikedFilms.map((f) => (
+                    <div key={f.id}>{f.title}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-          <div style={{ marginTop: '20px'}}>
-            <h3>Мне не понравилось ({dislikedFilms.length})</h3>
-            {dislikedFilms.map(f => (
-              <div key={f.id}>{f.title}</div>
-            ))}
-          </div>
-        </div>
-        
-      </div>
+        }/>
+      <Route path="/film/:id" element={<FilmPage allFilms={allFilms} />} />
+    </Routes>
+  );
+}
+
+function FilmPage({ allFilms }) {
+  const { id } = useParams();
+  const film = allFilms.find(f => f.id === id);
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>{film.title}</h1>
+      {film.image && (
+        <img src={film.image} alt={film.title} style={{ maxWidth: '300px', borderRadius: '7px' }} />
+      )}
+      <p>Год выпуска: {film.year}</p>
+      <p>Жанр: {film.genre}</p>
     </div>
   );
 }

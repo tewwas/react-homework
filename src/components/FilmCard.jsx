@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 function FilmCard({ 
   title, 
@@ -10,7 +11,8 @@ function FilmCard({
   handleDislike, 
   isLiked, 
   isDisliked, 
-  image
+  image,
+  link
 }) {
   const titleStyle = { 
     color: '#2c3e50', 
@@ -43,44 +45,50 @@ function FilmCard({
     backgroundColor: isActive ? color : '#a3a3a3'
   });
 
-  const handleLikeClick = () => {
-    handleLike();
-  };
-
-  const handleDislikeClick = () => {
-    handleDislike();
-  };
-
   return (
-    <div style={{
-      border: '1px solid #ccc',
-      padding: '10px',
-      marginBottom: '10px'
-    }}>
-      
-      <h2 style={titleStyle}>{title}</h2>
+    <div
+      style={{
+        border: '1px solid #ccc',
+        padding: '10px',
+        marginBottom: '10px'
+      }}>
+
+      {link ? (
+        <h2 style={{ ...titleStyle, margin: 0 }}>
+          <Link to={link} style={{ textDecoration: 'none', color: '#2c3e50' }}>
+            {title}
+          </Link>
+        </h2>
+      ) : (
+        <h2 style={titleStyle}>{title}</h2>
+      )}
+
       {image && (
         <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-          <img src={image} alt={title} style={{ maxWidth: '100%', height: 'auto', borderRadius: '7px' }} />
+          <img
+            src={image}
+            alt={title}
+            style={{
+              width: '400px',
+              height: '500px',
+              objectFit: 'cover',
+              borderRadius: '7px'
+            }}/>
         </div>
       )}
+
       <p style={yearStyle}>Год выпуска: {date}</p>
       <p style={genreStyle}>Жанр: {genre}</p>
-      <p>Понравилось: {likes}</p>
-      <p>Не понравилось: {dislikes}</p>
+      <p style={{ color:'#3ca300' }}>Понравилось: {likes}</p>
+      <p style={{ color:'#a10000' }}>Не понравилось: {dislikes}</p>
+
       <div style={containerStyle}>
         <button
           style={buttonStyle(isLiked, 'green')}
-          onClick={handleLikeClick}
-        >
-          Нравится
-        </button>
+          onClick={handleLike}>Нравится</button>
         <button
           style={buttonStyle(isDisliked, 'red')}
-          onClick={handleDislikeClick}
-        >
-          Не нравится
-        </button>
+          onClick={handleDislike}>Не нравится</button>
       </div>
     </div>
   );
