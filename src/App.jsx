@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { allFilmsData } from './data/data.js';
 import { handleLike, handleDislike, filterFilms } from './utils/utils.js';
 import FilmCard from './components/FilmCard.jsx';
 import './App.css';
 import classNames from 'classnames';
+import { useParams } from 'react-router-dom';
 
 function App() {
   const [allFilms, setAllFilms] = useState([]);
@@ -16,9 +17,13 @@ function App() {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const searchInputRef = useRef(null);
   useEffect(() => {
     setAllFilms(allFilmsData);
     setFilms(allFilmsData);
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
   }, []);
 
   useEffect(() => {
@@ -30,9 +35,8 @@ function App() {
     setFilms(filtered);
   }, [searchParams, allFilms]);
 
-  const addToViewed = (id) => {
-    const film = allFilms.find(f => f.id === id);
-    if (film && !viewedFilms.some(f => f.id === id)) {
+  const addToViewed = (film) => {
+    if (film && !viewedFilms.some(f => f.id === film.id)) {
       setViewedFilms(prev => [...prev, film]);
     }
   };
@@ -124,6 +128,7 @@ function App() {
           <div className="container">
             <div className="filters">
               <input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Название"
                 value={searchParams.get('search') || ''}
@@ -154,7 +159,7 @@ function App() {
               <div className="filmList">
                 <h2>Каталог фильмов</h2>
                 {films.map((film) => (
-                  <div key={film.id} onClick={() => addToViewed(film.id)}>
+                  <div key={film.id} onClick={() => addToViewed(film)}>
                     <FilmCard
                       title={film.title}
                       date={film.year}
@@ -165,14 +170,14 @@ function App() {
                       handleDislike={() => handleDislikeClick(film.id)}
                       isLiked={film.liked}
                       isDisliked={film.disliked}
-                      image={film.image}
+                      image={film.images[0]}
                       className={classNames('film-card', { liked: film.liked, disliked: film.disliked })}
                       link={`/film/${film.id}`}
                     />
                   </div>
                 ))}
               </div>
-              <div className="likeDisliked">
+              <div className="likeDisliked" style={{ marginLeft: '20px' }}>
                 <div>
                   <h3 style={{ color: '#3ca300' }}>Мне понравилось ({likedFilms.length})</h3>
                   {likedFilms.map((f) => (
@@ -199,6 +204,23 @@ function FilmPage({ allFilms }) {
   const { id } = useParams();
   const film = allFilms.find((f) => f.id === id);
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (film && film.images.length > 1) {
+      intervalRef.current = setInterval(() => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % film.images.length);
+      }, 5000);
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [film]);
+
   if (!film) {
     return <div>Фильм не найден</div>;
   }
@@ -206,12 +228,14 @@ function FilmPage({ allFilms }) {
   return (
     <div style={{ padding: '20px' }}>
       <h1>{film.title}</h1>
-      {film.image && (
+      {film.images.length > 0 ? (
         <img
-          src={film.image}
+          src={film.images[currentImageIndex]}
           alt={film.title}
           style={{ maxWidth: '300px', borderRadius: '7px' }}
         />
+      ) : (
+        <div style={{ width: '300px', height: '400px', backgroundColor: '#ccc', borderRadius: '7px' }}></div>
       )}
       <p>Год выпуска: {film.year}</p>
       <p>Жанр: {film.genre}</p>

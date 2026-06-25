@@ -1,7 +1,15 @@
-import image1 from '../assets/avengers_poster.webp';
-import image2 from '../assets/nowyouseeme_poster.webp';
-import image3 from '../assets/titanic_poster.webp';
-import image4 from '../assets/twilight_poster.jpg';
+import image_avengers1 from '../assets/avengers_poster.webp';
+import image_avengers2 from '../assets/avengers_poster2.webp';
+import image_avengers3 from '../assets/avengers_poster3.webp';
+import image_nowyouseeme1 from '../assets/nowyouseeme_poster.webp';
+import image_nowyouseeme2 from '../assets/nowyouseeme_poster2.webp';
+import image_nowyouseeme3 from '../assets/nowyouseeme_poster3.jpg';
+import image_titanic1 from '../assets/titanic_poster.webp';
+import image_titanic2 from '../assets/titanic_poster2.webp';
+import image_titanic3 from '../assets/titanic_poster3.webp';
+import image_twilight1 from '../assets/twilight_poster.jpg';
+import image_twilight2 from '../assets/twilight_poster2.webp';
+import image_twilight3 from '../assets/twilight_poster3.jpg';
 import { v4 as uuidv4 } from 'uuid';
 
 export const allFilmsData = [
@@ -14,7 +22,7 @@ export const allFilmsData = [
     dislikesCount: 36,
     liked: false,
     disliked: false,
-    image: image1,
+    images: [image_avengers1, image_avengers2, image_avengers3],
   },
   {
     id: uuidv4(),
@@ -25,7 +33,7 @@ export const allFilmsData = [
     dislikesCount: 15,
     liked: false,
     disliked: false,
-    image: image2,
+    images: [image_nowyouseeme1, image_nowyouseeme2, image_nowyouseeme3],
   },
   {
     id: uuidv4(),
@@ -36,7 +44,7 @@ export const allFilmsData = [
     dislikesCount: 12,
     liked: false,
     disliked: false,
-    image: image3,
+    images: [image_titanic1, image_titanic2, image_titanic3],
   },
   {
     id: uuidv4(),
@@ -47,6 +55,6 @@ export const allFilmsData = [
     dislikesCount: 31,
     liked: false,
     disliked: false,
-    image: image4,
+    images: [image_twilight1, image_twilight2, image_twilight3],
   },
 ];
