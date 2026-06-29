@@ -58,3 +58,10 @@ export const allFilmsData = [
     images: [image_twilight1, image_twilight2, image_twilight3],
   },
 ];
+
+export const PARAMS = {
+  SEARCH: 'search',
+  GENRE: 'genre',
+  DATE_FROM: 'date_from',
+  DATE_TO: 'date_to',
+};

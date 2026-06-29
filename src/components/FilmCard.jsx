@@ -2,19 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function FilmCard({
-  title,
-  date,
-  genre,
-  likes,
-  dislikes,
+  film,
   handleLike,
   handleDislike,
-  isLiked,
-  isDisliked,
-  image,
-  link,
-  className
+  className,
+  link
 }) {
+  const { title, year, genre, likesCount, dislikesCount, liked, disliked, images } = film;
+
   const titleStyle = {
     color: '#2c3e50',
     fontSize: '28px',
@@ -53,7 +48,8 @@ function FilmCard({
         padding: '10px',
         marginBottom: '10px',
       }}
-      className={className}>
+      className={className}
+    >
       {link ? (
         <h2 style={{ ...titleStyle, margin: 0 }}>
           <Link to={link} style={{ textDecoration: 'none', color: '#2c3e50' }}>
@@ -64,10 +60,10 @@ function FilmCard({
         <h2 style={titleStyle}>{title}</h2>
       )}
 
-      {image && (
+      {images && images.length > 0 && (
         <div style={{ textAlign: 'center', marginBottom: '10px' }}>
           <img
-            src={image}
+            src={images[0]}
             alt={title}
             style={{
               width: '400px',
@@ -79,16 +75,16 @@ function FilmCard({
         </div>
       )}
 
-      <p style={yearStyle}>Год выпуска: {date}</p>
+      <p style={yearStyle}>Год выпуска: {year}</p>
       <p style={genreStyle}>Жанр: {genre}</p>
-      <p style={{ color: '#3ca300' }}>Понравилось: {likes}</p>
-      <p style={{ color: '#a10000' }}>Не понравилось: {dislikes}</p>
+      <p style={{ color: '#3ca300' }}>Понравилось: {likesCount}</p>
+      <p style={{ color: '#a10000' }}>Не понравилось: {dislikesCount}</p>
 
       <div style={containerStyle}>
-        <button style={buttonStyle(isLiked, 'green')} onClick={handleLike}>
+        <button style={buttonStyle(liked, 'green')} onClick={handleLike}>
           Нравится
         </button>
-        <button style={buttonStyle(isDisliked, 'red')} onClick={handleDislike}>
+        <button style={buttonStyle(disliked, 'red')} onClick={handleDislike}>
           Не нравится
         </button>
       </div>
