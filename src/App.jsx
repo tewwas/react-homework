@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useRef, useState } from 'react';
+import React, { useReducer, useEffect, useRef, useState, useMemo } from 'react';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { allFilmsData } from './data/data.js';
 import { handleLike, handleDislike, filterFilms } from './utils/utils.js';
@@ -38,10 +38,13 @@ function App() {
     }
   }, []);
 
+  const filteredFilms = useMemo(() => {
+    return filterFilms(allFilms, searchParams);
+  }, [allFilms, searchParams]);
+
   useEffect(() => {
-    const filtered = filterFilms(allFilms, searchParams);
-    dispatchFilms({ type: 'init', payload: filtered });
-  }, [searchParams, allFilms]);
+    dispatchFilms({ type: 'init', payload: filteredFilms });
+  }, [filteredFilms]);
 
   const addToViewed = (film) => {
     if (film && !viewedFilmsRef.current.some(f => f.id === film.id)) {
@@ -166,8 +169,7 @@ function App() {
                   </div>
                 </div>
               </div>
-            }
-          />
+            }/>
           <Route path="/film/:id" element={<FilmPage allFilms={allFilms} />} />
         </Routes>
       </div>

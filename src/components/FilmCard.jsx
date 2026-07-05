@@ -23,7 +23,6 @@ function FilmCard({
     transition: 'background-color 0.3s, color 0.3s',
   };
 
-
   const titleStyle = {
     color: theme === 'dark' ? '#3399ff' : '#2c3e50',
     fontWeight: 'bold',
@@ -105,4 +104,4 @@ function FilmCard({
   );
 }
 
-export default FilmCard;
+export default React.memo(FilmCard);
