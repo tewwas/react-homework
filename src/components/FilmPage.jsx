@@ -33,8 +33,7 @@ function FilmPage({ allFilms }) {
         <img
           src={film.images[currentImageIndex]}
           alt={film.title}
-          style={{ maxWidth: '300px', borderRadius: '7px' }}
-        />
+          style={{ maxWidth: '300px', borderRadius: '7px' }}/>
       )}
       <p>Год выпуска: {film.year}</p>
       <p>Жанр: {film.genre}</p>

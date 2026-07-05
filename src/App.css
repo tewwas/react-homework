@@ -1,20 +1,65 @@
+.app-container.light {
+  background-color: #fff;
+  color: #000;
+}
+
+.app-container.dark {
+  background-color: #222;
+  color: #fff;
+}
+
+.app-container.dark .theme-toggle {
+  color: #000;
+}
+
+.app-container.dark .viewCounter {
+  background-color: #444;
+  color: #fff;
+}
+
+.header {
+  position: relative;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid #ccc;
+  font-family: Arial, sans-serif;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
+  padding: 8px 12px;
+  background-color: #eee;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  user-select: none;
+}
+
 .container {
   position: relative;
   display: flex;
   padding: 20px;
   gap: 20px;
   font-family: Arial, sans-serif;
+  min-height: calc(100vh - 60px);
 }
 
 .viewCounter {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: #fff;
+  background-color: transparent;
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-weight: bold;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
 .mainContent {

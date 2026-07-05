@@ -1,10 +1,11 @@
-import React, { useReducer, useEffect, useRef } from 'react';
+import React, { useReducer, useEffect, useRef, useState } from 'react';
 import { Routes, Route, useSearchParams } from 'react-router-dom';
 import { allFilmsData } from './data/data.js';
 import { handleLike, handleDislike, filterFilms } from './utils/utils.js';
 import FilmCard from './components/FilmCard.jsx';
 import FilmPage from './components/FilmPage.jsx';
 import { filmsReducer } from './reducer/reducers.js';
+import { ThemeContext } from './context/ThemeContext.jsx';
 import './App.css';
 import classNames from 'classnames';
 
@@ -23,6 +24,11 @@ function App() {
 
   const viewedFilmsRef = useRef([]);
   const searchInputRef = useRef(null);
+
+  const [theme, setTheme] = useState('light');
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
 
   useEffect(() => {
     setAllFilms(allFilmsData);
@@ -95,75 +101,89 @@ function App() {
   const dislikedFilms = films.filter(f => f.disliked);
 
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <div className="container">
-            <div className="filters">
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Название"
-                value={searchParams.get(PARAMS.SEARCH) || ''}
-                onChange={handleSearchChange}
-              />
-              <select value={searchParams.get(PARAMS.GENRE) || ''} onChange={handleGenreChange}>
-                <option value="">Все жанры</option>
-                <option value="Драма">Драма</option>
-                <option value="Мелодрама">Мелодрама</option>
-                <option value="Триллер">Триллер</option>
-                <option value="Боевик">Боевик</option>
-              </select>
-              <input
-                type="number"
-                placeholder="Год от"
-                value={searchParams.get(PARAMS.DATE_FROM) || ''}
-                onChange={handleDateFromChange}
-              />
-              <input
-                type="number"
-                placeholder="Год до"
-                value={searchParams.get(PARAMS.DATE_TO) || ''}
-                onChange={handleDateToChange}
-              />
-            </div>
-            <div className="viewCounter">Просмотрено: {viewedFilmsRef.current.length}</div>
-            <div className="mainContent">
-              <div className="filmList">
-                <h2>Каталог фильмов</h2>
-                {films.map((film) => (
-                  <div key={film.id} onClick={() => addToViewed(film)}>
-                    <FilmCard
-                      film={film}
-                      handleLike={() => handleLikeClick(film.id)}
-                      handleDislike={() => handleDislikeClick(film.id)}
-                      className={classNames('film-card', { liked: film.liked, disliked: film.disliked })}
-                      link={`/film/${film.id}`}
-                    />
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      <div className={`app-container ${theme}`}> 
+        <Header toggleTheme={toggleTheme}/>
+
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <div className="container">
+                <div className="filters">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Название"
+                    value={searchParams.get(PARAMS.SEARCH) || ''}
+                    onChange={handleSearchChange}/>
+                  <select value={searchParams.get(PARAMS.GENRE) || ''} onChange={handleGenreChange}>
+                    <option value="">Все жанры</option>
+                    <option value="Драма">Драма</option>
+                    <option value="Мелодрама">Мелодрама</option>
+                    <option value="Триллер">Триллер</option>
+                    <option value="Боевик">Боевик</option>
+                  </select>
+                  <input
+                    type="number"
+                    placeholder="Год от"
+                    value={searchParams.get(PARAMS.DATE_FROM) || ''}
+                    onChange={handleDateFromChange}/>
+                  <input
+                    type="number"
+                    placeholder="Год до"
+                    value={searchParams.get(PARAMS.DATE_TO) || ''}
+                    onChange={handleDateToChange}/>
+                </div>
+                <div className="viewCounter">Просмотрено: {viewedFilmsRef.current.length}</div>
+                <div className="mainContent">
+                  <div className="filmList">
+                    <h2>Каталог фильмов</h2>
+                    {films.map((film) => (
+                      <div key={film.id} onClick={() => addToViewed(film)}>
+                        <FilmCard
+                          film={film}
+                          handleLike={() => handleLikeClick(film.id)}
+                          handleDislike={() => handleDislikeClick(film.id)}
+                          className={classNames('film-card', { liked: film.liked, disliked: film.disliked })}
+                          link={`/film/${film.id}`}/>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <div className="likeDisliked" style={{ marginLeft: '20px' }}>
-                <div>
-                  <h3 style={{ color: '#3ca300' }}>Мне понравилось ({likedFilms.length})</h3>
-                  {likedFilms.map((f) => (
-                    <div key={f.id}>{f.title}</div>
-                  ))}
+                  <div className="likeDisliked" style={{ marginLeft: '20px' }}>
+                    <div>
+                      <h3 style={{ color: '#3ca300' }}>Мне понравилось ({likedFilms.length})</h3>
+                      {likedFilms.map((f) => (
+                        <div key={f.id}>{f.title}</div>
+                      ))}
+                    </div>
+                    <div style={{ marginTop: '20px' }}>
+                      <h3 style={{ color: theme === 'dark' ? '#f30000' : '#a10000' }}>Мне не понравилось ({dislikedFilms.length})</h3>
+                      {dislikedFilms.map((f) => (
+                        <div key={f.id}>{f.title}</div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div style={{ marginTop: '20px' }}>
-                  <h3 style={{ color: '#a10000' }}>Мне не понравилось ({dislikedFilms.length})</h3>
-                  {dislikedFilms.map((f) => (
-                    <div key={f.id}>{f.title}</div>
-                  ))}
-                </div>
               </div>
-            </div>
-          </div>
-        }
-      />
-      <Route path="/film/:id" element={<FilmPage allFilms={allFilms} />} />
-    </Routes>
+            }
+          />
+          <Route path="/film/:id" element={<FilmPage allFilms={allFilms} />} />
+        </Routes>
+      </div>
+    </ThemeContext.Provider>
+  );
+}
+
+function Header({ toggleTheme }) {
+  const { theme } = React.useContext(ThemeContext);
+  return (
+    <div className="header">
+      <h1>Мой каталог фильмов</h1>
+      <div className="theme-toggle" onClick={toggleTheme}>
+        {theme === 'light' ? 'Темная тема' : 'Светлая тема'}
+      </div>
+    </div>
   );
 }
 
