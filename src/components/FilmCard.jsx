@@ -5,7 +5,7 @@ import { ThemeContext } from '../context/ThemeContext.jsx';
 function FilmCard({
   film,
   handleLike,
-  handleDislike,
+  handleDislike, 
   className,
   link
 }) {

@@ -52,13 +52,13 @@ function App() {
     }
   };
 
-  const handleLikeClick = (id) => {
+  const handleLikeClick = useCallback((id) => {
     dispatchFilms({ type: 'like', payload: id });
-  };
+  }, [dispatchFilms]);
 
-  const handleDislikeClick = (id) => {
+  const handleDislikeClick = useCallback((id) => {
     dispatchFilms({ type: 'dislike', payload: id });
-  };
+  }, [dispatchFilms]);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
